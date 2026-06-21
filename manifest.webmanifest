@@ -1,11 +1,11 @@
 {
-  "name": "539 透明研究室",
+  "name": "539 樂透研究室",
   "short_name": "539研究室",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#07111f",
   "theme_color": "#07111f",
-  "description": "今彩539資料研究、模型比較與預測驗證工具。",
+  "description": "今彩 539 資訊整理、號碼觀察與簡易模型展示。",
   "icons": [
     {
       "src": "icon.svg",

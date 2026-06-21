@@ -32,29 +32,14 @@ const fakeDb = {
     { issue: "115000113", date: "2026-05-18", numbers: [6, 10, 17, 24, 34] },
   ],
   userNumberSets: [
-    { name: "常用組合 A", numbers: [2, 9, 18, 24, 37] },
-    { name: "生日組合", numbers: [3, 8, 12, 18, 27] },
+    { name: "固定觀察 A", numbers: [2, 9, 18, 24, 37] },
+    { name: "生日組合 B", numbers: [3, 8, 12, 18, 27] },
   ],
-};
-
-const labels = {
-  appName: "539 透明研究室",
-  latestIssue: "最新期別",
-  lockedNote: "模型已於開獎前鎖定，開獎後自動驗證。",
-  readSummary: "朗讀本期摘要",
-  todayDraw: "今日開獎",
-  myNumbers: "我的號碼",
-  researchModels: "研究模型",
-  verification: "驗證紀錄",
 };
 
 const formatNumber = (number) => String(number).padStart(2, "0");
 const formatNumbers = (numbers) => numbers.map(formatNumber).join("、");
 const intersectionCount = (a, b) => a.filter((number) => b.includes(number)).length;
-
-function getWindowDraws(size = 30) {
-  return fakeDb.draws.slice(0, size);
-}
 
 function countFrequency(draws) {
   const counts = new Map(Array.from({ length: 39 }, (_, index) => [index + 1, 0]));
@@ -69,7 +54,14 @@ function getHotNumbers(draws, count = 5) {
     .map(([number]) => number);
 }
 
-function getOverdueNumbers(draws, count = 5) {
+function getColdNumbers(draws, count = 5) {
+  return [...countFrequency(draws).entries()]
+    .sort((a, b) => a[1] - b[1] || a[0] - b[0])
+    .slice(0, count)
+    .map(([number]) => number);
+}
+
+function getOverdueNumbers(draws, count = 8) {
   const lastSeen = new Map();
   for (let number = 1; number <= 39; number += 1) lastSeen.set(number, draws.length + 1);
   draws.forEach((draw, index) => {
@@ -117,17 +109,12 @@ function buildModels(draws) {
   for (let number = 1; number <= 39; number += 1) {
     const freqScore = frequency.get(number) * 2.1;
     const overdueScore = overdue.includes(number) ? 3.5 : 0;
-    const zoneScore = number <= 20 ? 1.2 : 1;
-    balancedScores.set(number, freqScore + overdueScore + zoneScore);
+    const hotScore = hot.includes(number) ? 1.5 : 0;
+    balancedScores.set(number, freqScore + overdueScore + hotScore);
   }
 
   const overdueScores = new Map();
   overdue.forEach((number, index) => overdueScores.set(number, 100 - index));
-
-  const bayesScores = new Map();
-  for (let number = 1; number <= 39; number += 1) {
-    bayesScores.set(number, (frequency.get(number) + 1) / (recent.length + 39));
-  }
 
   const coScores = new Map(Array.from({ length: 39 }, (_, index) => [index + 1, 0]));
   recent.forEach((draw) => {
@@ -140,49 +127,34 @@ function buildModels(draws) {
 
   return [
     {
-      name: "平衡統計模型",
+      name: "平衡趨勢模型",
       tag: "推薦",
-      description: "綜合冷熱號、遺漏期數、奇偶、高低區間與和值，適合作為第一版主模型。",
+      description: "綜合熱門、冷門與近期權重，挑出較平均的一組號碼。",
       numbers: pickUniqueWeighted(balancedScores),
       score: 68,
     },
     {
-      name: "遺漏觀察模型",
-      tag: "研究",
-      description: "偏重久未出現號碼，適合觀察趨勢，但不能解讀成保證回補。",
+      name: "冷門回補模型",
+      tag: "觀察",
+      description: "偏向近期較少出現的號碼，適合拿來做交叉比較。",
       numbers: pickUniqueWeighted(overdueScores),
       score: 52,
     },
     {
-      name: "貝葉斯平滑模型",
-      tag: "穩健",
-      description: "用平滑後的出現機率降低短期波動，適合做長期比較。",
-      numbers: pickUniqueWeighted(bayesScores),
-      score: 59,
-    },
-    {
-      name: "共現關聯模型",
-      tag: "關聯",
-      description: "觀察近期常一起出現的號碼群，用來做號碼關聯研究。",
+      name: "連動比對模型",
+      tag: "回測",
+      description: "用最新一期與過往資料的重疊程度，估算可能連動的號碼。",
       numbers: pickUniqueWeighted(coScores),
       score: 55,
     },
     {
-      name: "隨機基準模型",
-      tag: "對照",
-      description: "完全隨機產生，用來檢查其他模型是否真的有差異。",
+      name: "隨機種子模型",
+      tag: "娛樂",
+      description: "用期別作為固定種子產生一組號碼，讓每期結果可重現。",
       numbers: pickUniqueWeighted(randomScores),
       score: 46,
     },
   ];
-}
-
-function evaluateModels(models, latestDraw) {
-  return models.map((model) => ({
-    name: model.name.replace("模型", ""),
-    hits: intersectionCount(model.numbers, latestDraw.numbers),
-    status: "已結算",
-  }));
 }
 
 function renderNumberBalls(container, numbers) {
@@ -190,33 +162,31 @@ function renderNumberBalls(container, numbers) {
 }
 
 function renderStats(draws) {
-  const cards = document.querySelectorAll(".stat-card");
-  cards[0].querySelector("strong").textContent = formatNumbers(getHotNumbers(draws, 3));
-  cards[1].querySelector("strong").textContent = formatNumbers(getOverdueNumbers(draws, 3));
-  cards[2].querySelector("strong").textContent = getCommonSumRange(draws);
+  document.querySelector("#hotNumbers").textContent = formatNumbers(getHotNumbers(draws, 3));
+  document.querySelector("#coldNumbers").textContent = formatNumbers(getColdNumbers(draws, 3));
+  document.querySelector("#sumRange").textContent = getCommonSumRange(draws);
 }
 
 function renderUserNumbers(latestDraw) {
-  const container = document.querySelector(".saved-ticket").parentElement;
-  container.querySelectorAll(".saved-ticket").forEach((node) => node.remove());
-
-  fakeDb.userNumberSets.forEach((set) => {
-    const hits = intersectionCount(set.numbers, latestDraw.numbers);
-    const ticket = document.createElement("div");
-    ticket.className = "saved-ticket";
-    ticket.innerHTML = `
-      <div>
-        <p>${set.name}</p>
-        <div class="mini-numbers">${set.numbers.map((number) => `<span>${formatNumber(number)}</span>`).join("")}</div>
-      </div>
-      <strong>中 ${hits} 碼</strong>
-    `;
-    container.appendChild(ticket);
-  });
+  const container = document.querySelector("#savedTickets");
+  container.innerHTML = fakeDb.userNumberSets
+    .map((set) => {
+      const hits = intersectionCount(set.numbers, latestDraw.numbers);
+      return `
+        <div class="saved-ticket">
+          <div>
+            <p>${set.name}</p>
+            <div class="mini-numbers">${set.numbers.map((number) => `<span>${formatNumber(number)}</span>`).join("")}</div>
+          </div>
+          <strong>中 ${hits} 個</strong>
+        </div>
+      `;
+    })
+    .join("");
 }
 
 function renderModels(models) {
-  const list = document.querySelector(".model-list");
+  const list = document.querySelector("#modelList");
   list.innerHTML = models
     .map(
       (model, index) => `
@@ -228,37 +198,41 @@ function renderModels(models) {
           <p>${model.description}</p>
           <div class="prediction">${model.numbers.map((number) => `<span>${formatNumber(number)}</span>`).join("")}</div>
           <meter min="0" max="100" value="${model.score}"></meter>
-          <small>研究分數 ${model.score}，需與隨機基準長期比較</small>
+          <small>研究分數 ${model.score}，僅作為趨勢觀察。</small>
         </article>
       `,
     )
     .join("");
 }
 
-function renderEvaluations(evaluations) {
-  const table = document.querySelector(".verify-table");
-  table.innerHTML = evaluations
-    .map((item) => `<div><span>${item.name}</span><strong>中 ${item.hits} 碼</strong><em>${item.status}</em></div>`)
+function renderEvaluations(models, latestDraw) {
+  const table = document.querySelector("#verifyTable");
+  table.innerHTML = models
+    .map((model) => {
+      const hits = intersectionCount(model.numbers, latestDraw.numbers);
+      return `<div><span>${model.name}</span><strong>中 ${hits} 個</strong><em>已比對</em></div>`;
+    })
     .join("");
+}
+
+function shuffleUserNumbers() {
+  const rand = seededRandom(Date.now() % 100000);
+  const scores = new Map(Array.from({ length: 39 }, (_, index) => [index + 1, rand()]));
+  fakeDb.userNumberSets[0] = { name: "隨機觀察", numbers: pickUniqueWeighted(scores) };
+  renderUserNumbers(fakeDb.draws[0]);
 }
 
 function renderPage() {
   const latestDraw = fakeDb.draws[0];
-  const windowDraws = getWindowDraws();
+  const windowDraws = fakeDb.draws.slice(0, 30);
   const models = buildModels(fakeDb.draws);
 
-  document.querySelector("title").textContent = labels.appName;
-  document.querySelector("h1").textContent = labels.appName;
-  document.querySelector(".eyebrow").textContent = "今彩539資料研究與驗證";
-  document.querySelector(".status-label").textContent = labels.latestIssue;
-  document.querySelector(".hero-panel h2").textContent = `第 ${latestDraw.issue} 期`;
-  document.querySelector(".hero-note").textContent = labels.lockedNote;
-  document.querySelector("#voiceButton").textContent = labels.readSummary;
+  document.querySelector("#latestIssue").textContent = `第 ${latestDraw.issue} 期`;
   renderNumberBalls(document.querySelector(".number-row"), latestDraw.numbers);
   renderStats(windowDraws);
   renderUserNumbers(latestDraw);
   renderModels(models);
-  renderEvaluations(evaluateModels(models, latestDraw));
+  renderEvaluations(models, latestDraw);
 }
 
 document.querySelector("#contrastButton")?.addEventListener("click", () => {
@@ -269,10 +243,12 @@ document.querySelector("#seniorButton")?.addEventListener("click", () => {
   document.body.classList.toggle("senior-mode");
 });
 
+document.querySelector("#shuffleButton")?.addEventListener("click", shuffleUserNumbers);
+
 document.querySelector("#voiceButton")?.addEventListener("click", () => {
   if (!("speechSynthesis" in window)) return;
   const latestDraw = fakeDb.draws[0];
-  const text = `第 ${latestDraw.issue} 期，開獎號碼是 ${formatNumbers(latestDraw.numbers)}。本服務只做資料研究，不保證中獎。`;
+  const text = `第 ${latestDraw.issue} 期，最新號碼是 ${formatNumbers(latestDraw.numbers)}。資料僅供參考。`;
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = "zh-TW";
