@@ -1,11 +1,11 @@
 {
-  "name": "539 樂透研究室",
-  "short_name": "539研究室",
+  "name": "539 Quantum Lab",
+  "short_name": "539 QLab",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#07111f",
-  "theme_color": "#07111f",
-  "description": "今彩 539 資訊整理、號碼觀察與簡易模型展示。",
+  "background_color": "#101113",
+  "theme_color": "#101113",
+  "description": "今彩 539 開獎資料同步、模型展示與研究儀表板。",
   "icons": [
     {
       "src": "icon.svg",

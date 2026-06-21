@@ -3,126 +3,145 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#07111f" />
-    <title>539 樂透研究室</title>
+    <meta name="theme-color" content="#101113" />
+    <title>539 Quantum Lab</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="app-shell">
-      <header class="topbar">
-        <div>
-          <p class="eyebrow">今彩 539 資訊整理與號碼觀察</p>
-          <h1>539 樂透研究室</h1>
-        </div>
-        <div class="top-actions">
-          <button class="icon-button" id="seniorButton" type="button" aria-label="切換大字模式" title="大字模式">大</button>
-          <button class="icon-button" id="contrastButton" type="button" aria-label="切換高對比模式" title="高對比">亮</button>
-        </div>
-      </header>
-
-      <main>
-        <section class="hero-panel">
-          <div>
-            <p class="status-label">最新開獎</p>
-            <h2 id="latestIssue">第 115000142 期</h2>
-            <p class="hero-note">整理近期開獎資料、熱門號碼與簡易模型，方便快速查看趨勢。</p>
-            <button class="voice-button" id="voiceButton" type="button">朗讀最新號碼</button>
-          </div>
-          <div class="number-row" aria-label="最新開獎號碼"></div>
-        </section>
-
-        <nav class="quick-grid" aria-label="快速導覽">
-          <a href="#draws">開獎統計</a>
-          <a href="#myNumbers">我的號碼</a>
-          <a href="#models">研究模型</a>
-          <a href="#verify">回測驗證</a>
+      <aside class="rail" aria-label="頁面導覽">
+        <a class="brand" href="#top" aria-label="回到頂端">
+          <span>539</span>
+          <small>QL</small>
+        </a>
+        <nav>
+          <a href="#draws">開獎</a>
+          <a href="#models">模型</a>
+          <a href="#signals">訊號</a>
+          <a href="#verify">回測</a>
         </nav>
+      </aside>
 
-        <section class="section" id="draws">
-          <div class="section-head">
-            <h2>近 30 期觀察</h2>
-            <span>每日更新</span>
+      <div class="workspace" id="top">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Taiwan Daily Cash 539 Intelligence</p>
+            <h1>539 Quantum Lab</h1>
           </div>
-          <div class="stat-grid">
-            <article class="stat-card">
-              <p>熱門號碼</p>
-              <strong id="hotNumbers">--</strong>
-              <small>近 30 期出現次數較高</small>
+          <div class="top-actions">
+            <button class="icon-button" id="refreshButton" type="button" title="重新整理資料">↻</button>
+            <button class="icon-button" id="seniorButton" type="button" title="大字模式">A</button>
+            <button class="icon-button" id="contrastButton" type="button" title="高對比">◐</button>
+          </div>
+        </header>
+
+        <main>
+          <section class="hero-grid">
+            <article class="market-card primary-card">
+              <div class="card-label">
+                <span>最新開獎</span>
+                <strong id="sourceBadge">讀取中</strong>
+              </div>
+              <h2 id="latestIssue">第 -- 期</h2>
+              <p id="latestDate">等待資料同步</p>
+              <div class="number-row" aria-label="最新開獎號碼"></div>
+              <div class="hero-actions">
+                <button class="voice-button" id="voiceButton" type="button">朗讀號碼</button>
+                <button class="text-button" id="shuffleButton" type="button">生成觀察組</button>
+              </div>
             </article>
-            <article class="stat-card">
-              <p>冷門號碼</p>
-              <strong id="coldNumbers">--</strong>
-              <small>近期較少出現，可作為參考</small>
+
+            <article class="market-card pulse-card">
+              <span class="scanner-line"></span>
+              <div class="card-label">
+                <span>Live Sync</span>
+                <strong id="syncState">待同步</strong>
+              </div>
+              <p class="big-metric" id="nextDraw">週一至週六</p>
+              <small id="updatedAt">尚未取得更新時間</small>
             </article>
-            <article class="stat-card">
-              <p>常見總和區間</p>
-              <strong id="sumRange">--</strong>
-              <small>以四分位數估算</small>
-            </article>
-          </div>
-        </section>
+          </section>
 
-        <section class="section" id="elder">
-          <div class="section-head">
-            <h2>長輩友善功能</h2>
-            <span>清楚好讀</span>
-          </div>
-          <div class="comfort-grid">
-            <article>
-              <strong>一鍵放大</strong>
-              <p>右上角「大」按鈕可以放大整體字級，號碼球也會跟著變大。</p>
-            </article>
-            <article>
-              <strong>高對比</strong>
-              <p>右上角「亮」按鈕可切換更亮的文字與邊線，夜間查看比較清楚。</p>
-            </article>
-            <article>
-              <strong>語音朗讀</strong>
-              <p>按下朗讀按鈕後，系統會念出最新一期與號碼。</p>
-            </article>
-          </div>
-        </section>
+          <section class="section" id="draws">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Draw Analytics</p>
+                <h2>近 30 期資料雷達</h2>
+              </div>
+              <span>39 選 5</span>
+            </div>
+            <div class="stat-grid">
+              <article class="stat-card">
+                <p>高頻熱區</p>
+                <strong id="hotNumbers">--</strong>
+                <small>近 30 期出現次數最高</small>
+              </article>
+              <article class="stat-card">
+                <p>低頻暗流</p>
+                <strong id="coldNumbers">--</strong>
+                <small>近期較少出現的號碼</small>
+              </article>
+              <article class="stat-card">
+                <p>總和通道</p>
+                <strong id="sumRange">--</strong>
+                <small>以資料四分位估算</small>
+              </article>
+            </div>
+          </section>
 
-        <section class="section" id="myNumbers">
-          <div class="section-head">
-            <h2>我的號碼</h2>
-            <button class="text-button" id="shuffleButton" type="button">換一組</button>
-          </div>
-          <div id="savedTickets"></div>
-        </section>
+          <section class="section" id="models">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Professor Models</p>
+                <h2>教授級號碼模型</h2>
+              </div>
+              <span>僅供娛樂研究</span>
+            </div>
+            <div class="model-list" id="modelList"></div>
+          </section>
 
-        <section class="section" id="models">
-          <div class="section-head">
-            <h2>研究模型</h2>
-            <span>僅供參考</span>
-          </div>
-          <div class="model-list" id="modelList"></div>
-        </section>
+          <section class="section split-section" id="signals">
+            <div>
+              <div class="section-head compact">
+                <div>
+                  <p class="eyebrow">Personal Watchlist</p>
+                  <h2>我的觀察組</h2>
+                </div>
+              </div>
+              <div id="savedTickets" class="ticket-list"></div>
+            </div>
+            <div>
+              <div class="section-head compact">
+                <div>
+                  <p class="eyebrow">Pipeline</p>
+                  <h2>自動更新流程</h2>
+                </div>
+              </div>
+              <div class="pipeline">
+                <div><span>1</span><strong>讀取官方開獎頁</strong><small>GitHub Actions 每天執行</small></div>
+                <div><span>2</span><strong>解析期別與號碼</strong><small>寫入 data/draws.json</small></div>
+                <div><span>3</span><strong>前端自動載入</strong><small>失敗時保留本地備援資料</small></div>
+              </div>
+            </div>
+          </section>
 
-        <section class="section" id="verify">
-          <div class="section-head">
-            <h2>回測驗證</h2>
-            <span>用最新一期比對</span>
-          </div>
-          <div class="verify-table" id="verifyTable"></div>
-        </section>
+          <section class="section" id="verify">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Backtest</p>
+                <h2>最新一期回測</h2>
+              </div>
+              <span id="verifyScope">用最新一期比對</span>
+            </div>
+            <div class="verify-table" id="verifyTable"></div>
+          </section>
 
-        <section class="section" id="autoUpdate">
-          <div class="section-head">
-            <h2>資料更新提醒</h2>
-            <span>目前為展示資料</span>
-          </div>
-          <div class="update-card">
-            <strong>可以先用這個版本上線展示</strong>
-            <p>目前資料已整理在前端程式中，之後若要串接正式開獎來源，可以再加上自動更新流程。</p>
-          </div>
-        </section>
-
-        <p class="disclaimer">
-          本頁面只做資料整理與娛樂用途，不保證中獎。購買彩券請量力而為。
-        </p>
-      </main>
+          <p class="disclaimer">
+            本頁面用於開獎資料整理、模型展示與娛樂研究，不保證中獎。實際開獎資訊請以台灣彩券公告為準。
+          </p>
+        </main>
+      </div>
     </div>
     <script src="app.js"></script>
   </body>

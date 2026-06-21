@@ -1,0 +1,30 @@
+name: Update 539 draw data
+
+on:
+  schedule:
+    - cron: "30 14 * * 1-6"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-draws:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Update draw data
+        run: node scripts/update-draws.js
+
+      - name: Commit updated data
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update 539 draw data"
+          file_pattern: data/draws.json
