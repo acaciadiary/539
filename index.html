@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#07111f" />
+    <title>539 透明研究室</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">今彩539資料研究與驗證</p>
+          <h1>539 透明研究室</h1>
+        </div>
+        <div class="top-actions">
+          <button class="icon-button" id="seniorButton" type="button" aria-label="切換長輩模式">大</button>
+          <button class="icon-button" id="contrastButton" type="button" aria-label="切換高對比">◐</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero-panel">
+          <div>
+            <p class="status-label">最新期別</p>
+            <h2>第 115000142 期</h2>
+            <p class="hero-note">模型已於開獎前鎖定，開獎後自動驗證。</p>
+            <button class="voice-button" id="voiceButton" type="button">朗讀本期摘要</button>
+          </div>
+          <div class="number-row" aria-label="最新開獎號碼">
+            <span>03</span><span>12</span><span>18</span><span>27</span><span>36</span>
+          </div>
+        </section>
+
+        <nav class="quick-grid" aria-label="主要功能">
+          <a href="#draws">今日開獎</a>
+          <a href="#myNumbers">我的號碼</a>
+          <a href="#models">研究模型</a>
+          <a href="#verify">驗證紀錄</a>
+        </nav>
+
+        <section class="section" id="draws">
+          <div class="section-head">
+            <h2>資料總覽</h2>
+            <span>近 30 期</span>
+          </div>
+          <div class="stat-grid">
+            <article class="stat-card">
+              <p>熱門號</p>
+              <strong>12、27、31</strong>
+              <small>近期出現較多</small>
+            </article>
+            <article class="stat-card">
+              <p>遺漏號</p>
+              <strong>05、22、38</strong>
+              <small>較久未開出</small>
+            </article>
+            <article class="stat-card">
+              <p>常見和值</p>
+              <strong>95 - 125</strong>
+              <small>僅供統計參考</small>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="elder">
+          <div class="section-head">
+            <h2>長輩友善</h2>
+            <span>簡單安心</span>
+          </div>
+          <div class="comfort-grid">
+            <article>
+              <strong>一鍵放大</strong>
+              <p>字更大、間距更寬，號碼更好看。</p>
+            </article>
+            <article>
+              <strong>開獎提醒</strong>
+              <p>只提醒結果，不催促投注。</p>
+            </article>
+            <article>
+              <strong>安心說明</strong>
+              <p>每個模型都顯示成功與失敗紀錄。</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="myNumbers">
+          <div class="section-head">
+            <h2>我的號碼</h2>
+            <button class="text-button" type="button">新增</button>
+          </div>
+          <div class="saved-ticket">
+            <div>
+              <p>常用組合 A</p>
+              <div class="mini-numbers"><span>02</span><span>09</span><span>18</span><span>24</span><span>37</span></div>
+            </div>
+            <strong>中 1 碼</strong>
+          </div>
+        </section>
+
+        <section class="section" id="models">
+          <div class="section-head">
+            <h2>模型比較</h2>
+            <span>開獎前鎖定</span>
+          </div>
+          <div class="model-list">
+            <article class="model-card active">
+              <div class="model-title">
+                <h3>平衡統計模型</h3>
+                <span>推薦</span>
+              </div>
+              <p>綜合冷熱號、遺漏期數、奇偶、高低區間與和值，適合作為第一版主模型。</p>
+              <div class="prediction"><span>04</span><span>11</span><span>19</span><span>28</span><span>35</span></div>
+              <meter min="0" max="100" value="68"></meter>
+              <small>近 100 期：2 碼以上比例 42%</small>
+            </article>
+
+            <article class="model-card">
+              <div class="model-title">
+                <h3>遺漏回補模型</h3>
+                <span>研究</span>
+              </div>
+              <p>偏重久未出現號碼，適合觀察趨勢，但波動較大。</p>
+              <div class="prediction"><span>05</span><span>14</span><span>22</span><span>33</span><span>38</span></div>
+              <meter min="0" max="100" value="51"></meter>
+              <small>近 100 期：2 碼以上比例 35%</small>
+            </article>
+
+            <article class="model-card">
+              <div class="model-title">
+                <h3>隨機基準模型</h3>
+                <span>對照</span>
+              </div>
+              <p>完全隨機產生，用來檢查其他模型是否真的有差異。</p>
+              <div class="prediction"><span>01</span><span>08</span><span>16</span><span>25</span><span>39</span></div>
+              <meter min="0" max="100" value="46"></meter>
+              <small>近 100 期：2 碼以上比例 33%</small>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="verify">
+          <div class="section-head">
+            <h2>驗證紀錄</h2>
+            <span>不可修改</span>
+          </div>
+          <div class="verify-table">
+            <div><span>平衡統計</span><strong>中 2 碼</strong><em>已結算</em></div>
+            <div><span>遺漏回補</span><strong>中 1 碼</strong><em>已結算</em></div>
+            <div><span>隨機基準</span><strong>中 0 碼</strong><em>已結算</em></div>
+          </div>
+        </section>
+
+        <section class="section" id="autoUpdate">
+          <div class="section-head">
+            <h2>每日自動更新</h2>
+            <span>規劃中</span>
+          </div>
+          <div class="update-card">
+            <strong>開獎後 10 分鐘檢查最新號碼</strong>
+            <p>正式版會由後端排程抓取官方公開資料，保存來源時間，並自動比對我的號碼與模型結果。</p>
+          </div>
+        </section>
+
+        <p class="disclaimer">
+          本服務僅提供歷史資料、統計分析與模型研究結果，不保證預測準確度、中獎結果或經濟利益。
+        </p>
+      </main>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
