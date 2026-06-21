@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#101113" />
-    <title>539 Quantum Lab</title>
+    <meta name="theme-color" content="#f7efe1" />
+    <title>539 數據模型比較台</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -13,12 +13,12 @@
       <aside class="rail" aria-label="頁面導覽">
         <a class="brand" href="#top" aria-label="回到頂端">
           <span>539</span>
-          <small>QL</small>
+          <small>模型</small>
         </a>
         <nav>
           <a href="#draws">開獎</a>
-          <a href="#models">模型</a>
-          <a href="#signals">訊號</a>
+          <a href="#models">比較</a>
+          <a href="#signals">資料</a>
           <a href="#verify">回測</a>
         </nav>
       </aside>
@@ -26,13 +26,13 @@
       <div class="workspace" id="top">
         <header class="topbar">
           <div>
-            <p class="eyebrow">Taiwan Daily Cash 539 Intelligence</p>
-            <h1>539 Quantum Lab</h1>
+            <p class="eyebrow">539 Data Model Comparison</p>
+            <h1>539 數據模型比較台</h1>
           </div>
           <div class="top-actions">
             <button class="icon-button" id="refreshButton" type="button" title="重新整理資料">↻</button>
-            <button class="icon-button" id="seniorButton" type="button" title="大字模式">A</button>
-            <button class="icon-button" id="contrastButton" type="button" title="高對比">◐</button>
+            <button class="icon-button" id="seniorButton" type="button" title="舒適閱讀模式">A</button>
+            <button class="icon-button" id="contrastButton" type="button" title="高對比模式">◐</button>
           </div>
         </header>
 
@@ -40,7 +40,7 @@
           <section class="hero-grid">
             <article class="market-card primary-card">
               <div class="card-label">
-                <span>最新開獎</span>
+                <span>最新開獎資料</span>
                 <strong id="sourceBadge">讀取中</strong>
               </div>
               <h2 id="latestIssue">第 -- 期</h2>
@@ -55,7 +55,7 @@
             <article class="market-card pulse-card">
               <span class="scanner-line"></span>
               <div class="card-label">
-                <span>Live Sync</span>
+                <span>資料同步</span>
                 <strong id="syncState">待同步</strong>
               </div>
               <p class="big-metric" id="nextDraw">週一至週六</p>
@@ -67,23 +67,23 @@
             <div class="section-head">
               <div>
                 <p class="eyebrow">Draw Analytics</p>
-                <h2>近 30 期資料雷達</h2>
+                <h2>近 30 期資料概覽</h2>
               </div>
               <span>39 選 5</span>
             </div>
             <div class="stat-grid">
               <article class="stat-card">
-                <p>高頻熱區</p>
+                <p>高頻號碼</p>
                 <strong id="hotNumbers">--</strong>
                 <small>近 30 期出現次數最高</small>
               </article>
               <article class="stat-card">
-                <p>低頻暗流</p>
+                <p>低頻號碼</p>
                 <strong id="coldNumbers">--</strong>
                 <small>近期較少出現的號碼</small>
               </article>
               <article class="stat-card">
-                <p>總和通道</p>
+                <p>總和區間</p>
                 <strong id="sumRange">--</strong>
                 <small>以資料四分位估算</small>
               </article>
@@ -94,14 +94,32 @@
             <div class="section-head">
               <div>
                 <p class="eyebrow">Professor Models</p>
-                <h2>教授級號碼模型</h2>
+                <h2>模型比較</h2>
               </div>
-              <span>僅供娛樂研究</span>
+              <span>資料觀察用途</span>
             </div>
             <div class="model-list" id="modelList"></div>
           </section>
 
           <section class="section split-section" id="signals">
+            <div>
+              <div class="section-head compact">
+                <div>
+                  <p class="eyebrow">Comfort Mode</p>
+                  <h2>舒適閱讀模式</h2>
+                </div>
+              </div>
+              <div class="comfort-grid">
+                <article>
+                  <strong>字級放大</strong>
+                  <p>右上角「A」按鈕可以放大整體字級，號碼球也會同步放大。</p>
+                </article>
+                <article>
+                  <strong>高對比切換</strong>
+                  <p>右上角「◐」按鈕可切換更清楚的對比，方便在不同光線下查看。</p>
+                </article>
+              </div>
+            </div>
             <div>
               <div class="section-head compact">
                 <div>
@@ -111,6 +129,9 @@
               </div>
               <div id="savedTickets" class="ticket-list"></div>
             </div>
+          </section>
+
+          <section class="section split-section">
             <div>
               <div class="section-head compact">
                 <div>
@@ -119,26 +140,25 @@
                 </div>
               </div>
               <div class="pipeline">
-                <div><span>1</span><strong>讀取官方開獎頁</strong><small>GitHub Actions 每天執行</small></div>
+                <div><span>1</span><strong>讀取正式開獎來源</strong><small>GitHub Actions 每天執行</small></div>
                 <div><span>2</span><strong>解析期別與號碼</strong><small>寫入 data/draws.json</small></div>
                 <div><span>3</span><strong>前端自動載入</strong><small>失敗時保留本地備援資料</small></div>
               </div>
             </div>
-          </section>
-
-          <section class="section" id="verify">
-            <div class="section-head">
-              <div>
-                <p class="eyebrow">Backtest</p>
-                <h2>最新一期回測</h2>
+            <div>
+              <div class="section-head compact">
+                <div>
+                  <p class="eyebrow">Backtest</p>
+                  <h2>最新一期回測</h2>
+                </div>
+                <span id="verifyScope">用最新一期比對</span>
               </div>
-              <span id="verifyScope">用最新一期比對</span>
+              <div class="verify-table" id="verifyTable"></div>
             </div>
-            <div class="verify-table" id="verifyTable"></div>
           </section>
 
           <p class="disclaimer">
-            本頁面用於開獎資料整理、模型展示與娛樂研究，不保證中獎。實際開獎資訊請以台灣彩券公告為準。
+            本頁面僅提供資料整理、模型比較與娛樂性觀察，不構成投注建議，也不保證任何結果。正式開獎資訊請以台灣彩券公告為準。
           </p>
         </main>
       </div>

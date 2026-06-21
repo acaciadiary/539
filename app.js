@@ -160,7 +160,7 @@ function buildModels(draws) {
     {
       name: "David 教授的黃金迴歸",
       tag: "主模型",
-      description: "混合高頻、低頻與近期權重，抓出最像市場共識的一組號碼。",
+      description: "混合高頻、低頻與近期權重，整理成一組便於比較的觀察號碼。",
       numbers: pickUniqueWeighted(davidScores),
       score: 72,
     },
@@ -181,7 +181,7 @@ function buildModels(draws) {
     {
       name: "Tesla 隨機共振場",
       tag: "娛樂",
-      description: "用期別作為固定種子，產生可重現但帶有隨機性的觀察組。",
+      description: "用期別作為固定種子，產生可重現且帶有隨機性的觀察組。",
       numbers: pickUniqueWeighted(teslaScores),
       score: 47,
     },
@@ -227,7 +227,7 @@ function renderModels(models) {
           <p>${model.description}</p>
           <div class="prediction">${model.numbers.map((number) => `<span>${formatNumber(number)}</span>`).join("")}</div>
           <meter min="0" max="100" value="${model.score}"></meter>
-          <small>研究分數 ${model.score}，不代表中獎機率。</small>
+          <small>比較分數 ${model.score}，僅代表模型內部排序。</small>
         </article>
       `,
     )

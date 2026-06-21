@@ -1,4 +1,4 @@
-const CACHE_NAME = "five39-quantum-lab-v1";
+const CACHE_NAME = "five39-model-compare-v2";
 const ASSETS = ["./", "./index.html", "./styles.css", "./app.js", "./data/draws.json", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", (event) => {

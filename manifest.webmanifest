@@ -1,11 +1,11 @@
 {
-  "name": "539 Quantum Lab",
-  "short_name": "539 QLab",
+  "name": "539 數據模型比較台",
+  "short_name": "539模型比較",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#101113",
-  "theme_color": "#101113",
-  "description": "今彩 539 開獎資料同步、模型展示與研究儀表板。",
+  "background_color": "#f7efe1",
+  "theme_color": "#c7352d",
+  "description": "今彩 539 開獎資料整理、自動同步與數據模型比較展示。",
   "icons": [
     {
       "src": "icon.svg",
