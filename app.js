@@ -318,6 +318,11 @@ function shuffleUserNumbers() {
   const scores = new Map(Array.from({ length: 39 }, (_, index) => [index + 1, rand()]));
   appState.userNumberSets[0] = { name: "即時生成組", numbers: pickUniqueWeighted(scores) };
   renderUserNumbers(appState.draws[0]);
+  const savedTickets = document.querySelector("#savedTickets");
+  savedTickets?.scrollIntoView({ behavior: "smooth", block: "center" });
+  const firstTicket = savedTickets?.querySelector(".saved-ticket");
+  firstTicket?.classList.add("flash");
+  window.setTimeout(() => firstTicket?.classList.remove("flash"), 900);
 }
 
 function getNextDrawLabel() {
@@ -363,6 +368,24 @@ document.querySelector("#seniorButton")?.addEventListener("click", () => {
 
 document.querySelector("#shuffleButton")?.addEventListener("click", shuffleUserNumbers);
 document.querySelector("#refreshButton")?.addEventListener("click", refreshData);
+
+document.querySelectorAll(".rail a[href^='#'], .brand[href^='#']").forEach((link) => {
+  link.addEventListener("click", (event) => {
+    const target = document.querySelector(link.getAttribute("href"));
+    if (!target) return;
+    event.preventDefault();
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+});
+
+const backTopButton = document.querySelector("#backTopButton");
+backTopButton?.addEventListener("click", () => {
+  document.querySelector("#top")?.scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+window.addEventListener("scroll", () => {
+  backTopButton?.classList.toggle("is-visible", window.scrollY > 360);
+});
 
 document.querySelector("#voiceButton")?.addEventListener("click", () => {
   if (!("speechSynthesis" in window)) return;
