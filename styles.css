@@ -183,6 +183,17 @@ h3 {
   font-weight: 900;
 }
 
+.small-button {
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--deep-red);
+  font-weight: 900;
+  cursor: pointer;
+}
+
 .voice-button {
   background: linear-gradient(180deg, #fff1bf, var(--gold));
   color: var(--ink);
@@ -447,9 +458,34 @@ meter {
   gap: 18px;
 }
 
-.ticket-list, .pipeline, .verify-table, .comfort-grid {
+.ticket-list, .pipeline, .verify-table, .comfort-grid, .backtest-summary {
   display: grid;
   gap: 10px;
+}
+
+.segmented-control {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 253, 247, 0.92);
+}
+
+.segmented-control button {
+  min-height: 34px;
+  border: 0;
+  border-radius: 6px;
+  padding: 0 12px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.segmented-control button.active {
+  background: var(--deep-red);
+  color: #fff;
 }
 
 .comfort-grid strong {
@@ -469,6 +505,12 @@ meter {
 
 .saved-ticket p { font-weight: 900; margin-bottom: 10px; }
 .saved-ticket strong { color: var(--deep-red); white-space: nowrap; }
+
+.ticket-actions {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
 
 .pipeline div {
   display: grid;
@@ -505,6 +547,56 @@ meter {
   font-style: normal;
   font-size: 0.92rem;
   font-weight: 900;
+}
+
+.backtest-summary {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 10px;
+}
+
+.backtest-summary article {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+  background: rgba(255, 253, 247, 0.92);
+}
+
+.backtest-summary p {
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.backtest-summary strong {
+  color: var(--deep-red);
+  font-size: 1.35rem;
+}
+
+.history-table {
+  overflow-x: auto;
+}
+
+.history-table table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 620px;
+}
+
+.history-table th,
+.history-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.history-table th {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.history-table .mini-numbers {
+  max-width: 240px;
 }
 
 .disclaimer {
@@ -576,6 +668,7 @@ meter {
   .number-row { gap: 7px; }
   .number-row span { min-height: 54px; }
   .verify-table div { grid-template-columns: 1fr; }
+  .backtest-summary { grid-template-columns: 1fr; }
   .heat-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
   .heat-cell { min-height: 52px; }
 }

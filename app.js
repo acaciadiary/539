@@ -39,11 +39,34 @@ let appState = {
     { name: "固定觀察 A", numbers: [2, 9, 18, 24, 37] },
     { name: "生日組合 B", numbers: [3, 8, 12, 18, 27] },
   ],
+  currentGeneratedSet: null,
+  historyLimit: 30,
 };
 
 const formatNumber = (number) => String(number).padStart(2, "0");
 const formatNumbers = (numbers) => numbers.map(formatNumber).join("、");
 const intersectionCount = (a, b) => a.filter((number) => b.includes(number)).length;
+const ticketStorageKey = "539-saved-ticket-sets";
+
+function loadSavedTickets() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(ticketStorageKey) || "[]");
+    if (!Array.isArray(saved)) return;
+    const validSets = saved
+      .filter((set) => set.name && Array.isArray(set.numbers) && set.numbers.length === 5)
+      .map((set) => ({
+        name: String(set.name),
+        numbers: set.numbers.map(Number).sort((a, b) => a - b),
+      }));
+    if (validSets.length) appState.userNumberSets = validSets;
+  } catch (error) {
+    localStorage.removeItem(ticketStorageKey);
+  }
+}
+
+function saveTicketsToStorage() {
+  localStorage.setItem(ticketStorageKey, JSON.stringify(appState.userNumberSets));
+}
 
 function normalizeDraws(draws) {
   return draws
@@ -221,6 +244,82 @@ function renderStats(draws) {
   document.querySelector("#sumRange").textContent = getCommonSumRange(draws);
 }
 
+function renderHistory(draws) {
+  const rows = draws.slice(0, appState.historyLimit);
+  document.querySelector("#historyTable").innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>期別</th>
+          <th>日期</th>
+          <th>號碼</th>
+          <th>總和</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows
+          .map((draw) => {
+            const sum = draw.numbers.reduce((total, number) => total + number, 0);
+            return `
+              <tr>
+                <td>${draw.issue}</td>
+                <td>${draw.date}</td>
+                <td><div class="mini-numbers">${draw.numbers.map((number) => `<span>${formatNumber(number)}</span>`).join("")}</div></td>
+                <td>${sum}</td>
+              </tr>
+            `;
+          })
+          .join("")}
+      </tbody>
+    </table>
+  `;
+  document.querySelector("#history30Button")?.classList.toggle("active", appState.historyLimit === 30);
+  document.querySelector("#history100Button")?.classList.toggle("active", appState.historyLimit === 100);
+}
+
+function getBacktestRecords(draws, limit = 30) {
+  const records = [];
+  const modelStats = new Map();
+  const max = Math.min(limit, draws.length - 6);
+
+  for (let index = 0; index < max; index += 1) {
+    const targetDraw = draws[index];
+    const priorDraws = draws.slice(index + 1);
+    if (priorDraws.length < 6) continue;
+    const models = buildModels(priorDraws);
+    models.forEach((model) => {
+      const hits = intersectionCount(model.numbers, targetDraw.numbers);
+      if (!modelStats.has(model.name)) modelStats.set(model.name, { name: model.name, total: 0, rounds: 0, twoPlus: 0 });
+      const stat = modelStats.get(model.name);
+      stat.total += hits;
+      stat.rounds += 1;
+      if (hits >= 2) stat.twoPlus += 1;
+      records.push({ issue: targetDraw.issue, model: model.name, hits });
+    });
+  }
+
+  return { records, modelStats: [...modelStats.values()] };
+}
+
+function renderBacktestSummary(draws) {
+  const { records, modelStats } = getBacktestRecords(draws, 30);
+  const averageHits = records.length
+    ? (records.reduce((total, record) => total + record.hits, 0) / records.length).toFixed(2)
+    : "--";
+  const bestModel = modelStats
+    .slice()
+    .sort((a, b) => b.total / b.rounds - a.total / a.rounds)[0];
+  const twoPlusRate = records.length
+    ? `${Math.round((records.filter((record) => record.hits >= 2).length / records.length) * 100)}%`
+    : "--";
+
+  document.querySelector("#backtestSummary").innerHTML = `
+    <article><p>近 30 期平均</p><strong>${averageHits} 個</strong></article>
+    <article><p>最佳模型</p><strong>${bestModel ? bestModel.name.split(" ")[0] : "--"}</strong></article>
+    <article><p>2 個以上比率</p><strong>${twoPlusRate}</strong></article>
+  `;
+}
+
 function renderHalfYear(draws) {
   const halfDraws = getHalfYearDraws(draws);
   const frequency = countFrequency(halfDraws);
@@ -269,16 +368,27 @@ function renderHalfYear(draws) {
 }
 
 function renderUserNumbers(latestDraw) {
-  document.querySelector("#savedTickets").innerHTML = appState.userNumberSets
-    .map((set) => {
+  const displaySets = [
+    ...(appState.currentGeneratedSet ? [{ ...appState.currentGeneratedSet, isDraft: true }] : []),
+    ...appState.userNumberSets,
+  ];
+  document.querySelector("#savedTickets").innerHTML = displaySets
+    .map((set, index) => {
       const hits = intersectionCount(set.numbers, latestDraw.numbers);
+      const savedIndex = appState.currentGeneratedSet ? index - 1 : index;
+      const action = set.isDraft
+        ? `<button class="small-button" type="button" data-save-current="true">收藏</button>`
+        : `<button class="small-button" type="button" data-delete-ticket="${savedIndex}">刪除</button>`;
       return `
         <div class="saved-ticket">
           <div>
             <p>${set.name}</p>
             <div class="mini-numbers">${set.numbers.map((number) => `<span>${formatNumber(number)}</span>`).join("")}</div>
           </div>
-          <strong>中 ${hits} 個</strong>
+          <div class="ticket-actions">
+            <strong>中 ${hits} 個</strong>
+            ${action}
+          </div>
         </div>
       `;
     })
@@ -316,13 +426,35 @@ function renderEvaluations(models, latestDraw) {
 function shuffleUserNumbers() {
   const rand = seededRandom(Date.now() % 100000);
   const scores = new Map(Array.from({ length: 39 }, (_, index) => [index + 1, rand()]));
-  appState.userNumberSets[0] = { name: "即時生成組", numbers: pickUniqueWeighted(scores) };
+  appState.currentGeneratedSet = { name: "即時生成組", numbers: pickUniqueWeighted(scores) };
   renderUserNumbers(appState.draws[0]);
   const savedTickets = document.querySelector("#savedTickets");
   savedTickets?.scrollIntoView({ behavior: "smooth", block: "center" });
   const firstTicket = savedTickets?.querySelector(".saved-ticket");
   firstTicket?.classList.add("flash");
   window.setTimeout(() => firstTicket?.classList.remove("flash"), 900);
+}
+
+function saveCurrentTicket() {
+  if (!appState.currentGeneratedSet) shuffleUserNumbers();
+  const ticket = appState.currentGeneratedSet;
+  const key = ticket.numbers.join("-");
+  const exists = appState.userNumberSets.some((set) => set.numbers.join("-") === key);
+  if (!exists) {
+    appState.userNumberSets.unshift({
+      name: `收藏觀察 ${appState.userNumberSets.length + 1}`,
+      numbers: ticket.numbers,
+    });
+    saveTicketsToStorage();
+  }
+  appState.currentGeneratedSet = null;
+  renderUserNumbers(appState.draws[0]);
+}
+
+function deleteTicket(index) {
+  appState.userNumberSets.splice(index, 1);
+  saveTicketsToStorage();
+  renderUserNumbers(appState.draws[0]);
 }
 
 function getNextDrawLabel() {
@@ -346,10 +478,12 @@ function renderPage() {
 
   renderNumberBalls(document.querySelector(".number-row"), latestDraw.numbers);
   renderStats(windowDraws);
+  renderHistory(appState.draws);
   renderHalfYear(appState.draws);
   renderUserNumbers(latestDraw);
   renderModels(models);
   renderEvaluations(models, latestDraw);
+  renderBacktestSummary(appState.draws);
 }
 
 async function refreshData() {
@@ -367,7 +501,25 @@ document.querySelector("#seniorButton")?.addEventListener("click", () => {
 });
 
 document.querySelector("#shuffleButton")?.addEventListener("click", shuffleUserNumbers);
+document.querySelector("#saveTicketButton")?.addEventListener("click", saveCurrentTicket);
 document.querySelector("#refreshButton")?.addEventListener("click", refreshData);
+
+document.querySelector("#history30Button")?.addEventListener("click", () => {
+  appState.historyLimit = 30;
+  renderHistory(appState.draws);
+});
+
+document.querySelector("#history100Button")?.addEventListener("click", () => {
+  appState.historyLimit = 100;
+  renderHistory(appState.draws);
+});
+
+document.querySelector("#savedTickets")?.addEventListener("click", (event) => {
+  const saveButton = event.target.closest("[data-save-current]");
+  const deleteButton = event.target.closest("[data-delete-ticket]");
+  if (saveButton) saveCurrentTicket();
+  if (deleteButton) deleteTicket(Number(deleteButton.dataset.deleteTicket));
+});
 
 document.querySelectorAll(".rail a[href^='#'], .brand[href^='#']").forEach((link) => {
   link.addEventListener("click", (event) => {
@@ -398,6 +550,7 @@ document.querySelector("#voiceButton")?.addEventListener("click", () => {
   window.speechSynthesis.speak(utterance);
 });
 
+loadSavedTickets();
 refreshData();
 
 if ("serviceWorker" in navigator) {

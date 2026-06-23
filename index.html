@@ -23,6 +23,7 @@
         </a>
         <nav>
           <a href="#draws">開獎</a>
+          <a href="#history">歷史</a>
           <a href="#halfYear">半年</a>
           <a href="#models">比較</a>
           <a href="#signals">資料</a>
@@ -56,6 +57,7 @@
               <div class="hero-actions">
                 <button class="voice-button" id="voiceButton" type="button">朗讀號碼</button>
                 <button class="text-button" id="shuffleButton" type="button">生成觀察組</button>
+                <button class="text-button" id="saveTicketButton" type="button">收藏觀察組</button>
               </div>
             </article>
 
@@ -95,6 +97,20 @@
                 <small>以資料四分位估算</small>
               </article>
             </div>
+          </section>
+
+          <section class="section" id="history">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">History</p>
+                <h2>歷史開獎表</h2>
+              </div>
+              <div class="segmented-control" aria-label="歷史期數">
+                <button class="active" id="history30Button" type="button">30 期</button>
+                <button id="history100Button" type="button">100 期</button>
+              </div>
+            </div>
+            <div class="history-table" id="historyTable"></div>
           </section>
 
           <section class="section" id="halfYear">
@@ -209,6 +225,7 @@
                 </div>
                 <span id="verifyScope">用最新一期比對</span>
               </div>
+              <div class="backtest-summary" id="backtestSummary"></div>
               <div class="verify-table" id="verifyTable"></div>
             </div>
           </section>
