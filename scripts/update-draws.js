@@ -3,6 +3,7 @@ const path = require("path");
 
 const outputPath = path.join(process.cwd(), "data", "draws.json");
 const officialUrl = process.env.TAIWAN_LOTTERY_539_URL || "https://www.taiwanlottery.com.tw/lotto/DailyCash/history.aspx";
+const maxDraws = 180;
 
 const apiCandidates = [
   officialUrl,
@@ -44,7 +45,7 @@ function uniqueDraws(draws) {
     const normalized = normalizeDraw(draw);
     if (normalized) map.set(normalized.issue, normalized);
   });
-  return [...map.values()].sort((a, b) => b.issue.localeCompare(a.issue)).slice(0, 80);
+  return [...map.values()].sort((a, b) => b.issue.localeCompare(a.issue)).slice(0, maxDraws);
 }
 
 function collectJsonDraws(value, output = []) {

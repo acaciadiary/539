@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#fff7ea" />
     <title>539 數據模型比較台</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -17,6 +23,7 @@
         </a>
         <nav>
           <a href="#draws">開獎</a>
+          <a href="#halfYear">半年</a>
           <a href="#models">比較</a>
           <a href="#signals">資料</a>
           <a href="#verify">回測</a>
@@ -86,6 +93,55 @@
                 <p>總和區間</p>
                 <strong id="sumRange">--</strong>
                 <small>以資料四分位估算</small>
+              </article>
+            </div>
+          </section>
+
+          <section class="section" id="halfYear">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Six-Month Trend</p>
+                <h2>半年趨勢觀察</h2>
+              </div>
+              <span id="halfYearScope">近半年</span>
+            </div>
+            <div class="stat-grid half-summary">
+              <article class="stat-card">
+                <p>資料期數</p>
+                <strong id="halfDrawCount">--</strong>
+                <small id="halfDateRange">等待資料同步</small>
+              </article>
+              <article class="stat-card">
+                <p>半年熱門</p>
+                <strong id="halfHotNumbers">--</strong>
+                <small>半年內出現較多的號碼</small>
+              </article>
+              <article class="stat-card">
+                <p>久未出現</p>
+                <strong id="halfOverdueNumbers">--</strong>
+                <small>依目前資料回推較久沒開</small>
+              </article>
+            </div>
+            <div class="trend-layout">
+              <article class="trend-panel">
+                <div class="section-head compact">
+                  <div>
+                    <p class="eyebrow">Heat Map</p>
+                    <h3>1 到 39 號熱度牆</h3>
+                  </div>
+                  <span>深色代表較常出現</span>
+                </div>
+                <div class="heat-grid" id="halfHeatGrid" aria-label="半年號碼熱度"></div>
+              </article>
+              <article class="trend-panel">
+                <div class="section-head compact">
+                  <div>
+                    <p class="eyebrow">Monthly</p>
+                    <h3>每月摘要</h3>
+                  </div>
+                  <span>由近到遠</span>
+                </div>
+                <div class="month-list" id="monthList"></div>
               </article>
             </div>
           </section>

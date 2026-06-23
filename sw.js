@@ -1,4 +1,4 @@
-const CACHE_NAME = "five39-model-compare-v3";
+const CACHE_NAME = "five39-model-compare-v4";
 const ASSETS = ["./", "./index.html", "./styles.css", "./app.js", "./data/draws.json", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", (event) => {

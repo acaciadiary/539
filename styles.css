@@ -29,7 +29,7 @@ body {
     radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.92), transparent 24rem),
     var(--bg);
   color: var(--ink);
-  font-family: "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif;
+  font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
   font-size: 17px;
 }
 
@@ -50,6 +50,10 @@ body.senior-mode { font-size: 21px; }
 body.senior-mode .number-row span { min-height: 88px; }
 
 button, a { font: inherit; }
+
+strong, h1, h2, h3, .brand, .number-row span, .prediction span, .mini-numbers span, .heat-cell span {
+  font-family: "IBM Plex Sans", "Noto Sans TC", system-ui, sans-serif;
+}
 
 .app-shell {
   display: grid;
@@ -324,7 +328,7 @@ h3 {
   gap: 12px;
 }
 
-.stat-card, .model-card, .saved-ticket, .verify-table div, .pipeline div, .comfort-grid article {
+.stat-card, .model-card, .saved-ticket, .verify-table div, .pipeline div, .comfort-grid article, .trend-panel, .month-card {
   border: 1px solid var(--line);
   background: rgba(255, 253, 247, 0.92);
   border-radius: 12px;
@@ -334,6 +338,73 @@ h3 {
 .stat-card p, .model-card p, .comfort-grid p { color: var(--muted); margin-bottom: 10px; line-height: 1.7; }
 .stat-card strong { display: block; color: var(--deep-red); font-size: 1.65rem; margin-bottom: 6px; }
 small { color: var(--muted); font-size: 0.92rem; }
+
+.trend-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.trend-panel {
+  padding: 18px;
+}
+
+.heat-grid {
+  display: grid;
+  grid-template-columns: repeat(13, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.heat-cell {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  min-height: 56px;
+  border: 1px solid rgba(185, 74, 47, 0.16);
+  border-radius: 10px;
+  color: var(--ink);
+  background: var(--heat-bg, #fff4dc);
+}
+
+.heat-cell span {
+  color: var(--deep-red);
+  font-size: 1.02rem;
+  font-weight: 800;
+}
+
+.heat-cell small {
+  margin-top: 2px;
+  font-size: 0.78rem;
+}
+
+.month-list {
+  display: grid;
+  gap: 10px;
+}
+
+.month-card {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+}
+
+.month-card header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+}
+
+.month-card strong {
+  color: var(--deep-red);
+}
+
+.month-card p {
+  margin-bottom: 0;
+  color: var(--ink);
+  font-weight: 700;
+}
 
 .model-list {
   display: grid;
@@ -459,7 +530,8 @@ meter {
   }
   .rail nav a { min-width: 64px; }
   .workspace { padding: 18px; }
-  .hero-grid, .split-section, .model-list, .stat-grid { grid-template-columns: 1fr; }
+  .hero-grid, .split-section, .model-list, .stat-grid, .trend-layout { grid-template-columns: 1fr; }
+  .heat-grid { grid-template-columns: repeat(8, minmax(0, 1fr)); }
 }
 
 @media (max-width: 520px) {
@@ -470,4 +542,6 @@ meter {
   .number-row { gap: 7px; }
   .number-row span { min-height: 54px; }
   .verify-table div { grid-template-columns: 1fr; }
+  .heat-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .heat-cell { min-height: 52px; }
 }

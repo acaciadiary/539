@@ -108,10 +108,33 @@ function getOverdueNumbers(draws, count = 8) {
 }
 
 function getCommonSumRange(draws) {
+  if (!draws.length) return "--";
   const sums = draws.map((draw) => draw.numbers.reduce((total, number) => total + number, 0)).sort((a, b) => a - b);
   const low = sums[Math.floor(sums.length * 0.25)];
   const high = sums[Math.floor(sums.length * 0.75)];
   return `${low} - ${high}`;
+}
+
+function getHalfYearDraws(draws) {
+  const latestDate = new Date(`${draws[0].date}T00:00:00`);
+  const since = new Date(latestDate);
+  since.setMonth(since.getMonth() - 6);
+  return draws.filter((draw) => new Date(`${draw.date}T00:00:00`) >= since);
+}
+
+function formatMonthKey(key) {
+  const [year, month] = key.split("-");
+  return `${year}/${month}`;
+}
+
+function getMonthGroups(draws) {
+  const groups = new Map();
+  draws.forEach((draw) => {
+    const key = draw.date.slice(0, 7);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(draw);
+  });
+  return [...groups.entries()].sort((a, b) => b[0].localeCompare(a[0]));
 }
 
 function seededRandom(seed) {
@@ -198,6 +221,53 @@ function renderStats(draws) {
   document.querySelector("#sumRange").textContent = getCommonSumRange(draws);
 }
 
+function renderHalfYear(draws) {
+  const halfDraws = getHalfYearDraws(draws);
+  const frequency = countFrequency(halfDraws);
+  const maxCount = Math.max(...frequency.values(), 1);
+  const latest = halfDraws[0];
+  const oldest = halfDraws[halfDraws.length - 1];
+
+  document.querySelector("#halfYearScope").textContent = halfDraws.length >= 140 ? "近半年" : "目前可用資料";
+  document.querySelector("#halfDrawCount").textContent = `${halfDraws.length} 期`;
+  document.querySelector("#halfDateRange").textContent =
+    latest && oldest ? `${oldest.date} 到 ${latest.date}` : "等待資料同步";
+  document.querySelector("#halfHotNumbers").textContent = formatNumbers(getHotNumbers(halfDraws, 5));
+  document.querySelector("#halfOverdueNumbers").textContent = formatNumbers(getOverdueNumbers(halfDraws, 5));
+
+  document.querySelector("#halfHeatGrid").innerHTML = [...frequency.entries()]
+    .map(([number, count]) => {
+      const ratio = count / maxCount;
+      const lightness = 94 - Math.round(ratio * 28);
+      const background = `hsl(24 88% ${lightness}%)`;
+      return `
+        <div class="heat-cell" style="--heat-bg: ${background}">
+          <span>${formatNumber(number)}</span>
+          <small>${count} 次</small>
+        </div>
+      `;
+    })
+    .join("");
+
+  document.querySelector("#monthList").innerHTML = getMonthGroups(halfDraws)
+    .map(([month, monthDraws]) => {
+      const sums = monthDraws.map((draw) => draw.numbers.reduce((total, number) => total + number, 0));
+      const low = Math.min(...sums);
+      const high = Math.max(...sums);
+      return `
+        <article class="month-card">
+          <header>
+            <strong>${formatMonthKey(month)}</strong>
+            <span>${monthDraws.length} 期</span>
+          </header>
+          <p>${formatNumbers(getHotNumbers(monthDraws, 5))}</p>
+          <small>總和範圍 ${low} - ${high}</small>
+        </article>
+      `;
+    })
+    .join("");
+}
+
 function renderUserNumbers(latestDraw) {
   document.querySelector("#savedTickets").innerHTML = appState.userNumberSets
     .map((set) => {
@@ -271,6 +341,7 @@ function renderPage() {
 
   renderNumberBalls(document.querySelector(".number-row"), latestDraw.numbers);
   renderStats(windowDraws);
+  renderHalfYear(appState.draws);
   renderUserNumbers(latestDraw);
   renderModels(models);
   renderEvaluations(models, latestDraw);
