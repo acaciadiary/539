@@ -2,7 +2,7 @@
   "game": "今彩539",
   "source": "台灣彩券正式開獎資料同步",
   "sourceUrl": "https://api.taiwanlottery.com/TLCAPIWeB/Lottery/Daily539Result",
-  "updatedAt": "2026-06-22T22:16:31.229Z",
+  "updatedAt": "2026-06-23T21:10:35.748Z",
   "draws": [
     {
       "issue": "115000142",
